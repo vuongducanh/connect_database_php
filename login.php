@@ -6,20 +6,18 @@
         $username = $_POST['username'];
         $password = $_POST['password'];
 
-        $query = $conn -> prepare("SELECT * FROM `user` WHERE `username` = '$username' AND 'password' = '$password'");
-        $query -> execute();
+            $query = $conn -> prepare("SELECT * FROM user WHERE username = '$username' AND password = '$password'");
 
+            $query -> execute(); //thuc thi ham $query
 
+            $count = $query -> fetchColumn();
 
-        echo $count;
-        if(empty($username) || empty($password)) {
-            $error = 'wrong';
-        }
-
-        if($count > 0) {
-            $_SESSION['username'] = $username;
-            header('location: student.php');
-        }
+            if($count == "1") {
+                $_SESSION['username'] = $username;
+                header('location: student.php');
+            } else {
+                $message = 'username and password wrong!';
+            }
     }
 ?>
 
@@ -41,9 +39,9 @@
         <div class="form" >
             <form class="login-form" method="post" action="">
                 <?php
-                if(isset($error)) : ?>
+                if(isset($message)) : ?>
                     <div class="alert alert-warning">
-                        <strong>Warning!</strong> <?php echo $error; ?>
+                        <?php echo $message; ?>
                     </div>
                 <?php endif ?>
                 <input type="text" placeholder="username" name="username"/>
