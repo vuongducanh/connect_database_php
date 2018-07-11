@@ -4,20 +4,24 @@
 
     if(isset($_POST['submit']) && $_POST['submit'] === 'login') {
         $username = $_POST['username'];
-        $password = $_POST['password'];
+        $password = md5($_POST['password']);
 
+        if(empty($username) || empty($password)) {
+            $error = 'wrong';
+        } else {
             $query = $conn -> prepare("SELECT * FROM user WHERE username = '$username' AND password = '$password'");
 
             $query -> execute(); //thuc thi ham $query
 
             $count = $query -> fetchColumn();
 
-            if($count == "1") {
+            if($count > 0) {
                 $_SESSION['username'] = $username;
                 header('location: student.php');
             } else {
                 $message = 'username and password wrong!';
             }
+        }
     }
 ?>
 
@@ -38,6 +42,12 @@
     <div class="login-page">
         <div class="form" >
             <form class="login-form" method="post" action="">
+                <?php
+                if(isset($error)) : ?>
+                    <div class="alert alert-warning">
+                        <strong>Warning!</strong> <?php echo $error; ?>
+                    </div>
+                <?php endif ?>
                 <?php
                 if(isset($message)) : ?>
                     <div class="alert alert-warning">
